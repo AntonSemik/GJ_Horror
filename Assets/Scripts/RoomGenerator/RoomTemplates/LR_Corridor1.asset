@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bef2087fb49fabb408f311a6daffe366, type: 3}
+  m_Name: LR_Corridor1
+  m_EditorClassIdentifier: 
+  _roomPrefab: {fileID: 5179474674303151319, guid: 9855d9e0bde9284479993447086115ab, type: 3}
+  _hasTopOpening: 0
+  _hasRightOpening: 1
+  _hasBottomOpening: 0
+  _hasLeftOpening: 1

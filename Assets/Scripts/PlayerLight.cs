@@ -13,14 +13,13 @@ public class PlayerLight : MonoBehaviour
     float _timerLightLevel = 1; //always reset to 1
     int _lightLevel = 0; //light level depends on keys collected or something else;
 
-    //[SerializeField] float _flickerCooldownMin, _timerFlickerCooldown;
-    //[SerializeField] float _flickerCooldownMax;
-    //[SerializeField] float _flickerTimeMin, _timerFlickerTime;
-    //[SerializeField] float _flickerTimeMax;
-    //bool _isFlickering;
-
     bool _isInLight;
     float _temp;
+
+    private void Start()
+    {
+        Key.OnKeyCollected += OnKeyCollected;
+    }
 
     private void Update()
     {
@@ -35,6 +34,11 @@ public class PlayerLight : MonoBehaviour
         _temp = _timerLightLevel;
 
         _playerLight.intensity = _lightIntencity.Evaluate(_temp);
+    }
+
+    void OnKeyCollected()
+    {
+        Debug.Log("Key collected");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -54,4 +58,8 @@ public class PlayerLight : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        Key.OnKeyCollected -= OnKeyCollected;
+    }
 }

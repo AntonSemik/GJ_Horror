@@ -13,53 +13,90 @@ public class PlayerLight : MonoBehaviour
     float _timerLightLevel = 1; //always reset to 1
     int _lightLevel = 0; //light level depends on keys collected or something else;
 
-    bool _isInLight;
+    bool _isActive = false;
     float _temp;
+
+    [SerializeField] bool _IsFlickering = true;
+    [SerializeField] float _flickerTime; float _flickerTimer;
+    [SerializeField] float _flickerDelta;
 
     private void Start()
     {
-        Key.OnKeyCollected += OnKeyCollected;
+        KeyRegister.OnKeyUpdate += OnKeyCollected;
     }
 
     private void Update()
     {
-        if (!_isInLight)
+        if (_isActive)
         {
-            _timerLightLevel -= (1.0f / _decayTime[_lightLevel]) * Time.deltaTime;
-            if (_timerLightLevel < 0) _timerLightLevel = 0; 
-        } else
-        {
-            _timerLightLevel = 1;
+            _flickerTimer -= Time.deltaTime;
+            if (_flickerTimer <= 0)
+            {
+                _IsFlickering = false;
+            }
+
+            SetLightLevel();
         }
+    }
+
+    void SetLightLevel()
+    {
+        _timerLightLevel -= (1.0f / _decayTime[_lightLevel]) * Time.deltaTime;
+        if (_timerLightLevel < 0) _timerLightLevel = 0;
+
         _temp = _timerLightLevel;
 
-        _playerLight.intensity = _lightIntencity.Evaluate(_temp);
-    }
-
-    void OnKeyCollected()
-    {
-        Debug.Log("Key collected");
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Light"))
+        if (!_IsFlickering)
         {
-            _isInLight = true;
-            _timerLightLevel = 1;
+            _playerLight.intensity = _lightIntencity.Evaluate(_temp);
+        } else
+        {
+            StartCoroutine(FlickIntensity());
+        }
+
+    }
+
+    private IEnumerator FlickIntensity()
+    {
+        float t0 = Time.time;
+        float t = t0;
+        WaitUntil wait = new WaitUntil(() => Time.time > t0 + t);
+        yield return new WaitForSeconds(Random.Range(0.01f, 0.5f));
+
+        while (true)
+        {
+            if (_IsFlickering)
+            {
+                t0 = Time.time;
+                float r = Random.Range(_temp - _flickerDelta, _temp);
+                _playerLight.intensity = r;
+                t = Random.Range(0.05f, 0.15f);
+                yield return wait;
+            }
+            else yield return null;
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    void OnKeyCollected(int _collected)
     {
-        if (collision.CompareTag("Light"))
+        _lightLevel = _collected;
+
+        _timerLightLevel = 1;
+
+        if (_collected == 1)
         {
-            _isInLight = false;
+            _IsFlickering = true; _flickerTimer = _flickerTime;
+            _isActive = true;
+        }
+
+        if (_collected == 6)
+        {
+            _IsFlickering = true; _flickerTimer = _flickerTime/2;
         }
     }
 
     private void OnDestroy()
     {
-        Key.OnKeyCollected -= OnKeyCollected;
+        KeyRegister.OnKeyUpdate -= OnKeyCollected;
     }
 }

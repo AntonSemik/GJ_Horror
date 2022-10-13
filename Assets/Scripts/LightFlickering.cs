@@ -33,7 +33,7 @@ public class LightFlickering : MonoBehaviour
             if (_flickIntensity)
             {
                 t0 = Time.time;
-                float r = Random.Range(_baseIntensity - _intensityRange, _baseIntensity + _intensityRange);
+                float r = Random.Range(_baseIntensity - _intensityRange, _baseIntensity);
                 _light.intensity = r;
                 t = Random.Range(_intensityTimeMin, _intensityTimeMax);
                 yield return wait;
